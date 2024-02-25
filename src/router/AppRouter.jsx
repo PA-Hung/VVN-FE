@@ -6,6 +6,7 @@ import ProtectedRoute from "@/router/protectedRoute";
 import Login from "@/components/auth/login.page";
 import AccommodationPage from "../components/accommodation/accommodation.page";
 import AdminPage from "../components/admin/admin.page";
+import RolePage from "../components/role/role.page";
 
 export const router = createBrowserRouter([
   {
@@ -35,6 +36,10 @@ export const router = createBrowserRouter([
       {
         path: "user",
         element: <UserPage />,
+      },
+      {
+        path: "role",
+        element: <RolePage />,
       },
     ],
   },

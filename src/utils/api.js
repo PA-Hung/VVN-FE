@@ -16,6 +16,7 @@ const deleteAccommodation = (id) => {
 const updateAccommodation = (data) => {
     return axios.patch('api/v1/accommodation', data)
 }
+
 // import/export Excel
 const importExcel = (fileExcel) => {
     const formData = new FormData();
@@ -66,6 +67,23 @@ const postLogOut = () => {
     return axios.post('api/v1/auth/logout')
 }
 
+// Role -------------------------------------------------------------------------------
+
+const createRole = (data) => {
+    return axios.post('api/v1/roles', data)
+}
+
+const getRole = (query) => {
+    return axios.get(`api/v1/roles?${query}`)
+}
+
+const deleteRole = (id) => {
+    return axios.delete(`api/v1/roles/${id}`)
+}
+
+const updateRole = (data) => {
+    return axios.patch('api/v1/roles', data)
+}
 
 export {
     // Excel
@@ -85,5 +103,9 @@ export {
     postLogin,
     getAccount,
     postLogOut,
-
+    // -------- role
+    createRole,
+    getRole,
+    deleteRole,
+    updateRole
 }

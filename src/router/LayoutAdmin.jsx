@@ -86,6 +86,14 @@ const LayoutAdmin = () => {
         })
       );
     }
+    if (e.key === "role") {
+      dispatch(
+        setActiveKey({
+          activeKey: e.key,
+          title: "Phân quyền người dùng",
+        })
+      );
+    }
   };
 
   const handleLogout = async () => {
@@ -117,7 +125,14 @@ const LayoutAdmin = () => {
       label: <Link to={"/admin/user"}>Quản lý người dùng</Link>,
       key: "user",
       icon: <UserSwitchOutlined />,
-      visible: isAdmin === "ADMIN" ? "true" : "false",
+      visible: "true",
+      // visible: isAdmin === "ADMIN" ? "true" : "false",
+    },
+    {
+      label: <Link to={"/admin/role"}>Phân quyền người dùng</Link>,
+      key: "role",
+      icon: <UserSwitchOutlined />,
+      visible: "true",
     },
 
     {

@@ -93,6 +93,9 @@ const UserTable = () => {
       title: "Quyền hạn",
       dataIndex: "role",
       key: "role",
+      render: (_value, record) => {
+        return <div>{record.role.name}</div>;
+      },
     },
     {
       title: "Actions",
