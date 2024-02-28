@@ -9,6 +9,7 @@ import {
   Col,
 } from "antd";
 import { createPermission } from "../../utils/api";
+import { ALL_MODULES } from "../../utils/permission.module";
 
 const CreateModal = (props) => {
   const { getData, isCreateModalOpen, setIsCreateModalOpen } = props;
@@ -92,16 +93,7 @@ const CreateModal = (props) => {
                 name="method"
                 rules={[{ required: true, message: "Chọn phương thức !" }]}
               >
-                <Select
-                  placeholder="Chọn phương thức"
-                  options={[
-                    { value: "GET", label: "GET" },
-                    { value: "POST", label: "POST" },
-                    { value: "PUT", label: "PUT" },
-                    { value: "PATCH", label: "PATCH" },
-                    { value: "DELETE", label: "DELETE" },
-                  ]}
-                />
+                <Select placeholder="Chọn phương thức" options={ALL_MODULES} />
               </Form.Item>
             </Col>
           </Row>

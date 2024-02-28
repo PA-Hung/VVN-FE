@@ -10,6 +10,7 @@ import {
 } from "antd";
 import { createPermission, updatePermission } from "../../utils/api";
 import { useEffect } from "react";
+import { ALL_MODULES } from "../../utils/permission.module";
 
 const UpdateModal = (props) => {
   const {
@@ -110,16 +111,7 @@ const UpdateModal = (props) => {
                 name="method"
                 rules={[{ required: true, message: "Chọn phương thức !" }]}
               >
-                <Select
-                  placeholder="Chọn phương thức"
-                  options={[
-                    { value: "GET", label: "GET" },
-                    { value: "POST", label: "POST" },
-                    { value: "PUT", label: "PUT" },
-                    { value: "PATCH", label: "PATCH" },
-                    { value: "DELETE", label: "DELETE" },
-                  ]}
-                />
+                <Select placeholder="Chọn phương thức" options={ALL_MODULES} />
               </Form.Item>
             </Col>
           </Row>

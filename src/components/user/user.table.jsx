@@ -7,25 +7,29 @@ import {
   message,
   Form,
   Input,
+  Space,
 } from "antd";
 import queryString from "query-string";
 import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import CreateUserModal from "./create.user.modal";
 import UpdateUserModal from "./update.user.modal";
-import { deleteUser, getUsers } from "../../utils/api";
+import { deleteUser } from "@/utils/api";
+import CheckAccess from "@/utils/check.access";
+import { ALL_PERMISSIONS } from "@/utils/permission.module";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUser, userOnchangeTable } from "../../redux/slice/userSlice";
 
 const UserTable = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  const [listUsers, setListUsers] = useState([]);
+
+  const loading = useSelector((state) => state.user.isFetching);
+  const meta = useSelector((state) => state.user.meta);
+  const listUsers = useSelector((state) => state.user.result);
+  console.log(listUsers);
+  const dispatch = useDispatch();
+
   const [updateData, setUpdateData] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [meta, setMeta] = useState({
-    current: 1,
-    pageSize: 5,
-    pages: 0,
-    total: 0,
-  });
 
   useEffect(() => {
     getData();
@@ -33,23 +37,7 @@ const UserTable = () => {
 
   const getData = async () => {
     const query = buildQuery();
-    setLoading(true);
-    const res = await getUsers(query);
-    if (res.data) {
-      setListUsers(res.data.result);
-      setMeta({
-        current: res.data.meta.current,
-        pageSize: res.data.meta.pageSize,
-        pages: res.data.meta.pages,
-        total: res.data.meta.total,
-      });
-    } else {
-      notification.error({
-        message: "Có lỗi xảy ra",
-        description: res.message,
-      });
-    }
-    setLoading(false);
+    dispatch(fetchUser({ query }));
   };
 
   const confirmDelete = async (user) => {
@@ -94,51 +82,54 @@ const UserTable = () => {
       dataIndex: "role",
       key: "role",
       render: (_value, record) => {
-        return <div>{record.role.name}</div>;
+        return <div>{record?.role?.name}</div>;
       },
     },
     {
-      title: "Actions",
+      title: "Hành động",
       render: (record) => {
         return (
-          <div style={{ display: "flex", flexDirection: "row", gap: "5px" }}>
-            <div>
-              <Button
-                danger
-                onClick={() => {
-                  setIsUpdateModalOpen(true);
-                  setUpdateData(record);
-                }}
+          <Space>
+            <div style={{ display: "flex", flexDirection: "row", gap: "5px" }}>
+              <CheckAccess
+                FeListPermission={ALL_PERMISSIONS.USERS.UPDATE}
+                hideChildren
               >
-                Cập nhật
-              </Button>
-            </div>
-            <div>
-              <Popconfirm
-                title={`Bạn muốn xoá ${record.name} không ?`}
-                onConfirm={() => confirmDelete(record)}
-                okText="Yes"
-                cancelText="No"
+                <div>
+                  <Button
+                    danger
+                    onClick={() => {
+                      setIsUpdateModalOpen(true);
+                      setUpdateData(record);
+                    }}
+                  >
+                    Cập nhật
+                  </Button>
+                </div>
+              </CheckAccess>
+              <CheckAccess
+                FeListPermission={ALL_PERMISSIONS.USERS.DELETE}
+                hideChildren
               >
-                <Button type={"primary"} danger>
-                  Xoá
-                </Button>
-              </Popconfirm>
+                <div>
+                  <Popconfirm
+                    title={`Bạn muốn xoá ${record.name} không ?`}
+                    onConfirm={() => confirmDelete(record)}
+                    okText="Yes"
+                    cancelText="No"
+                  >
+                    <Button type={"primary"} danger>
+                      Xoá
+                    </Button>
+                  </Popconfirm>
+                </div>
+              </CheckAccess>
             </div>
-          </div>
+          </Space>
         );
       },
     },
   ];
-
-  const handleOnchangeTable = (page, pageSize) => {
-    setMeta({
-      current: page,
-      pageSize: pageSize,
-      pages: meta.pages,
-      total: meta.total,
-    });
-  };
 
   const [form] = Form.useForm();
 
@@ -183,23 +174,7 @@ const UserTable = () => {
 
   const onSearch = async (value) => {
     const query = buildQuery(value);
-    setLoading(true);
-    const res = await getUsers(query);
-    if (res.data) {
-      setListUsers(res.data.result);
-      setMeta({
-        current: res.data.meta.current,
-        pageSize: res.data.meta.pageSize,
-        pages: res.data.meta.pages,
-        total: res.data.meta.total,
-      });
-    } else {
-      notification.error({
-        message: "Có lỗi xảy ra",
-        description: res.message,
-      });
-    }
-    setLoading(false);
+    dispatch(fetchUser({ query }));
   };
 
   return (
@@ -235,15 +210,20 @@ const UserTable = () => {
             </Button>
           </Form>
         </div>
-        <div>
-          <Button
-            icon={<PlusOutlined />}
-            type={"primary"}
-            onClick={() => setIsCreateModalOpen(true)}
-          >
-            Thêm mới
-          </Button>
-        </div>
+        <CheckAccess
+          FeListPermission={ALL_PERMISSIONS.USERS.CREATE}
+          hideChildren
+        >
+          <div>
+            <Button
+              icon={<PlusOutlined />}
+              type={"primary"}
+              onClick={() => setIsCreateModalOpen(true)}
+            >
+              Thêm mới
+            </Button>
+          </div>
+        </CheckAccess>
       </div>
       <Table
         size="small"
@@ -258,7 +238,15 @@ const UserTable = () => {
           total: meta.total,
           showTotal: (total, range) =>
             `${range[0]} - ${range[1]} of ${total} items`,
-          onChange: (page, pageSize) => handleOnchangeTable(page, pageSize),
+          onChange: (page, pageSize) =>
+            dispatch(
+              userOnchangeTable({
+                current: page,
+                pageSize: pageSize,
+                pages: meta.pages,
+                total: meta.total,
+              })
+            ),
           showSizeChanger: true,
           defaultPageSize: meta.pageSize,
         }}

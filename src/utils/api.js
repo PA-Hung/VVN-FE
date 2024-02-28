@@ -49,9 +49,10 @@ export const deleteUser = (id) => {
     return axios.delete(`api/v1/users/${id}`)
 }
 
-export const updateUser = (data) => {
-    return axios.patch('api/v1/users', data)
+export const updateUser = (user) => {
+    return axios.patch(`/api/v1/users`, { ...user })
 }
+
 
 // Auth ----------------------------------------------------------------------------------------------------
 

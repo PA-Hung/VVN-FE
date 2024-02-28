@@ -66,7 +66,7 @@ const Login = () => {
             rules={[
               {
                 required: true,
-                message: "Nhập tên đăng nhập!",
+                message: "Nhập số điện thoại !",
               },
             ]}
           >

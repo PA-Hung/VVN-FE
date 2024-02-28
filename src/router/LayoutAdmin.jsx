@@ -11,10 +11,11 @@ import {
 } from "antd";
 import {
   HomeOutlined,
-  UserSwitchOutlined,
+  ExceptionOutlined,
   LogoutOutlined,
   CalendarOutlined,
-  VideoCameraAddOutlined,
+  UserOutlined,
+  ApiOutlined,
 } from "@ant-design/icons";
 import Logo from "@/components/admin/logo.jsx";
 import ToggleThemeButton from "@/components/admin/toggleTheme.jsx";
@@ -23,7 +24,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { setLogoutAction } from "@/redux/slice/authSlice.js";
 import HeaderAdmin from "@/components/admin/header.jsx";
 import { setActiveKey, setHomeKey } from "@/redux/slice/menuSlice.js";
-import { setThemeMode } from "../redux/slice/themeSlice";
+import { setThemeMode } from "@/redux/slice/themeSlice";
+import { ALL_PERMISSIONS } from "@/utils/permission.module";
 
 const { Footer, Sider, Content } = Layout;
 
@@ -31,11 +33,13 @@ const LayoutAdmin = () => {
   const [collapsed, setCollapsed] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const isAdmin = useSelector((state) => state.auth.user.role);
+  const userPermissions = useSelector((state) => state.auth.user.permissions);
   const activeMenu = useSelector((state) => state.menu.activeKey);
   const themeMode = useSelector((state) => state.theme.themeMode);
   const darkConfig = { algorithm: theme.darkAlgorithm };
   const lightConfig = { algorithm: theme.defaultAlgorithm };
+
+  const [menuItems, setMenuItems] = useState(["items"]);
 
   const {
     token: { colorBgContainer, borderRadiusLG },
@@ -116,48 +120,77 @@ const LayoutAdmin = () => {
     }
   };
 
-  const items = [
-    {
-      label: <Link to={"/admin"}>Trang chủ</Link>,
-      key: "home",
-      icon: <HomeOutlined />,
-      visible: "true",
-    },
-    {
-      label: <Link to={"/admin/accommodation"}>Quản lý lưu trú</Link>,
-      key: "accommodation",
-      icon: <CalendarOutlined />,
-      visible: "true",
-    },
-    {
-      label: <Link to={"/admin/user"}>Quản lý hội viên</Link>,
-      key: "user",
-      icon: <UserSwitchOutlined />,
-      visible: "true",
-      // visible: isAdmin === "ADMIN" ? "true" : "false",
-    },
-    {
-      label: <Link to={"/admin/role"}>Quản lý chức danh</Link>,
-      key: "role",
-      icon: <UserSwitchOutlined />,
-      visible: "true",
-    },
-    {
-      label: <Link to={"/admin/permission"}>Quản lý quyền hạn</Link>,
-      key: "permission",
-      icon: <UserSwitchOutlined />,
-      visible: "true",
-    },
+  useEffect(() => {
+    if (userPermissions?.length) {
+      const viewUser = userPermissions.find(
+        (item) =>
+          item.apiPath === ALL_PERMISSIONS.USERS.GET_PAGINATE.apiPath &&
+          item.method === ALL_PERMISSIONS.USERS.GET_PAGINATE.method
+      );
 
-    {
-      label: <Link onClick={() => handleLogout()}>Đăng xuất</Link>,
-      key: "logout",
-      icon: <LogoutOutlined />,
-      visible: "true",
-    },
-  ];
+      const viewRole = userPermissions.find(
+        (item) =>
+          item.apiPath === ALL_PERMISSIONS.ROLES.GET_PAGINATE.apiPath &&
+          item.method === ALL_PERMISSIONS.ROLES.GET_PAGINATE.method
+      );
 
-  const filteredItems = items.filter((item) => item.visible === "true");
+      const viewPermission = userPermissions.find(
+        (item) =>
+          item.apiPath === ALL_PERMISSIONS.PERMISSIONS.GET_PAGINATE.apiPath &&
+          item.method === ALL_PERMISSIONS.USERS.GET_PAGINATE.method
+      );
+
+      const full = [
+        {
+          label: <Link to={"/admin"}>Trang chủ</Link>,
+          key: "home",
+          icon: <HomeOutlined />,
+          visible: "true",
+        },
+        // {
+        //   label: <Link to={"/admin/accommodation"}>Quản lý lưu trú</Link>,
+        //   key: "accommodation",
+        //   icon: <CalendarOutlined />,
+        //   visible: "true",
+        // },
+        ...(viewUser
+          ? [
+              {
+                label: <Link to="/admin/user">Quản lý hội viên</Link>,
+                key: "/admin/user",
+                icon: <UserOutlined />,
+              },
+            ]
+          : []),
+        ...(viewRole
+          ? [
+              {
+                label: <Link to="/admin/role">Role</Link>,
+                key: "/admin/role",
+                icon: <ExceptionOutlined />,
+              },
+            ]
+          : []),
+        ...(viewPermission
+          ? [
+              {
+                label: <Link to="/admin/permission">Permission</Link>,
+                key: "/admin/permission",
+                icon: <ApiOutlined />,
+              },
+            ]
+          : []),
+
+        {
+          label: <Link onClick={() => handleLogout()}>Đăng xuất</Link>,
+          key: "logout",
+          icon: <LogoutOutlined />,
+          visible: "true",
+        },
+      ];
+      setMenuItems(full);
+    }
+  }, [userPermissions]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -201,7 +234,7 @@ const LayoutAdmin = () => {
               onClick={handleMenu}
               style={{ height: "100vh" }}
               mode="vertical"
-              items={filteredItems}
+              items={menuItems}
               defaultSelectedKeys={["home"]}
               selectedKeys={activeMenu}
             />

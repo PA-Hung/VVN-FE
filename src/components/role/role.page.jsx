@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Button, notification, Row, Col, Flex } from "antd";
 import queryString from "query-string";
 import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
-import { getRole } from "../../utils/api";
 import CreateModal from "./create.role/create.modal";
 import dayjs from "dayjs";
 import "dayjs/locale/vi";
@@ -11,22 +10,16 @@ import { useDispatch, useSelector } from "react-redux";
 import SearchModal from "./search.modal";
 import RoleCard from "./role.card";
 import RoleTable from "./role.table";
-import { setLogoutAction } from "../../redux/slice/authSlice";
-import { useNavigate } from "react-router-dom";
+import { fetchRole } from "../../redux/slice/roleSlice";
 
 const RolePage = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
-  const [listRole, setListRole] = useState([]);
-  const [loading, setLoading] = useState(false);
+
+  const isFetching = useSelector((state) => state.role.isFetching);
+  const meta = useSelector((state) => state.role.meta);
+  const listRole = useSelector((state) => state.role.result);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const [meta, setMeta] = useState({
-    current: 1,
-    pageSize: 10,
-    pages: 0,
-    total: 0,
-  });
 
   useEffect(() => {
     getData();
@@ -34,29 +27,7 @@ const RolePage = () => {
 
   const getData = async () => {
     const query = buildQuery();
-    setLoading(true);
-    const res = await getRole(query);
-    if (res.data) {
-      setListRole(res.data.result);
-      setMeta({
-        current: res?.data?.meta?.current,
-        pageSize: res?.data?.meta?.pageSize,
-        pages: res.data.meta.pages,
-        total: res.data.meta.total,
-      });
-    } else {
-      if (res.message === "Token không hợp lệ !") {
-        dispatch(setLogoutAction({}));
-        navigate("/");
-      } else {
-        notification.error({
-          message: "Có lỗi xảy ra",
-          placement: "top",
-          description: res.message,
-        });
-      }
-    }
-    setLoading(false);
+    dispatch(fetchRole({ query }));
   };
 
   const buildQuery = (
@@ -98,23 +69,7 @@ const RolePage = () => {
 
   const onSearch = async (value) => {
     const query = buildQuery(value);
-    setLoading(true);
-    const res = await getRole(query);
-    if (res.data) {
-      setListRole(res.data.result);
-      setMeta({
-        current: res.data.meta.current,
-        pageSize: res.data.meta.pageSize,
-        pages: res.data.meta.pages,
-        total: res.data.meta.total,
-      });
-    } else {
-      notification.error({
-        message: "Có lỗi xảy ra",
-        description: res.message,
-      });
-    }
-    setLoading(false);
+    dispatch(fetchRole({ query }));
   };
 
   return (
@@ -166,7 +121,12 @@ const RolePage = () => {
           /> */}
         </Col>
         <Col xs={0} sm={0} md={0} lg={24} xl={24}>
-          <RoleTable listRole={listRole} loading={loading} getData={getData} />
+          <RoleTable
+            listRole={listRole}
+            isFetching={isFetching}
+            getData={getData}
+            meta={meta}
+          />
         </Col>
       </Row>
       <CreateModal

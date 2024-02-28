@@ -17,9 +17,13 @@ const initialState = {
     errorRefreshToken: "",
     user: {
         _id: "",
-        phone: "",
+        email: "",
         name: "",
-        role: ""
+        role: {
+            _id: "",
+            name: "",
+        },
+        permissions: [],
     },
 }
 
@@ -34,18 +38,23 @@ const authSlice = createSlice({
             state.isAuthenticated = true;
             state.isLoading = false;
             state.user._id = action?.payload?._id;
+            state.user.email = action.payload.email;
             state.user.name = action.payload.name;
-            state.user.phone = action.payload.phone;
             state.user.role = action?.payload?.role;
+            state.user.permissions = action?.payload?.permissions;
         },
         setLogoutAction: (state, action) => {
             localStorage.removeItem('access_token');
             state.isAuthenticated = false;
             state.user = {
                 _id: "",
-                phone: "",
+                email: "",
                 name: "",
-                role: ","
+                role: {
+                    _id: "",
+                    name: "",
+                },
+                permissions: [],
             }
         },
         setRefreshTokenAction: (state, action) => {
@@ -66,9 +75,10 @@ const authSlice = createSlice({
                 state.isAuthenticated = true;
                 state.isLoading = false;
                 state.user._id = action?.payload?.user?._id;
-                state.user.phone = action.payload.user?.phone;
+                state.user.email = action.payload.user?.email;
                 state.user.name = action.payload.user?.name;
                 state.user.role = action?.payload?.user?.role;
+                state.user.permissions = action?.payload?.user?.permissions;
             }
         })
         builder.addCase(fetchAccount.rejected, (state, action) => {

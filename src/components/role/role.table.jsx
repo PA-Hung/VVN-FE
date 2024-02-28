@@ -6,18 +6,12 @@ import "dayjs/locale/vi";
 dayjs.locale("vi");
 import UpdateModal from "./update.role/update.modal";
 import { useDispatch } from "react-redux";
-import { fetchRoleById } from "../../redux/slice/roleSlice";
+import { fetchRoleById, roleOnchangeTable } from "../../redux/slice/roleSlice";
 
 const RoleTable = (props) => {
-  const { listRole, loading, getData } = props;
+  const { listRole, isFetching, getData, meta } = props;
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const dispatch = useDispatch();
-  const [meta, setMeta] = useState({
-    current: 1,
-    pageSize: 15,
-    pages: 0,
-    total: 0,
-  });
 
   useEffect(() => {
     getData();
@@ -118,15 +112,6 @@ const RoleTable = (props) => {
     },
   ];
 
-  const handleOnchangeTable = (page, pageSize) => {
-    setMeta({
-      current: page,
-      pageSize: pageSize,
-      pages: meta.pages,
-      total: meta.total,
-    });
-  };
-
   return (
     <>
       <Table
@@ -135,7 +120,7 @@ const RoleTable = (props) => {
         columns={columns}
         dataSource={listRole}
         rowKey={"_id"}
-        loading={loading}
+        loading={isFetching}
         bordered={true}
         pagination={{
           position: ["bottomCenter"],
@@ -144,7 +129,15 @@ const RoleTable = (props) => {
           total: meta.total,
           showTotal: (total, range) =>
             `${range[0]} - ${range[1]} of ${total} items`,
-          onChange: (page, pageSize) => handleOnchangeTable(page, pageSize),
+          onChange: (page, pageSize) =>
+            dispatch(
+              roleOnchangeTable({
+                current: page,
+                pageSize: pageSize,
+                pages: meta.pages,
+                total: meta.total,
+              })
+            ),
           showSizeChanger: true,
           defaultPageSize: meta.pageSize,
         }}

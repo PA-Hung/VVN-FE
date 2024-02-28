@@ -1,14 +1,31 @@
 import { Modal, Input, notification, Form, Select, message } from "antd";
-import { postCreateUser } from "../../utils/api";
+import { getRole, postCreateUser } from "../../utils/api";
+import { useEffect, useState } from "react";
+import _ from "lodash";
 
 const CreateUserModal = (props) => {
   const { getData, isCreateModalOpen, setIsCreateModalOpen } = props;
   const [form] = Form.useForm();
+  const [role, setRole] = useState([]);
 
   const resetModal = () => {
     setIsCreateModalOpen(false);
     form.resetFields();
   };
+
+  const groupBySelectRole = (data) => {
+    return data.map((item) => ({ value: item.name, key: item.name }));
+  };
+
+  useEffect(() => {
+    const init = async () => {
+      const res = await getRole(`current=1&pageSize=100`);
+      if (res.data?.result) {
+        setRole(groupBySelectRole(res.data?.result));
+      }
+    };
+    init();
+  }, []);
 
   const onFinish = async (values) => {
     // const { name, phone, password, role } = values
@@ -97,14 +114,7 @@ const CreateUserModal = (props) => {
               label="Role"
               rules={[{ required: true }]}
             >
-              <Select
-                placeholder="Chọn quyền !"
-                allowClear
-                options={[
-                  { value: "ADMIN", label: "Admin" },
-                  { value: "HOST", label: "Host" },
-                ]}
-              />
+              <Select placeholder="Chọn quyền !" options={role} />
             </Form.Item>
           </Form.Item>
         </Form>

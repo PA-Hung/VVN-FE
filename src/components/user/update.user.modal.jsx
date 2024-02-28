@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Modal, Input, notification, Form, Select, message } from "antd";
-import { updateUser } from "../../utils/api";
+import { getRole, updateUser } from "@/utils/api";
 
 const UpdateUserModal = (props) => {
   const {
@@ -11,18 +11,34 @@ const UpdateUserModal = (props) => {
     setUpdateData,
   } = props;
   const [form] = Form.useForm();
+  const [role, setRole] = useState([]);
+
+  useEffect(() => {
+    const init = async () => {
+      const res = await getRole(`current=1&pageSize=30`);
+      if (res.data?.result) {
+        setRole(groupBySelectRole(res.data?.result));
+      }
+    };
+    init();
+  }, []);
+
+  const groupBySelectRole = (data) => {
+    return data.map((item) => ({ value: item._id, label: item.name }));
+  };
 
   useEffect(() => {
     if (updateData) {
       form.setFieldsValue({
         name: updateData.name,
         phone: updateData.phone,
-        role: updateData.role,
+        role: updateData.role._id,
       });
     }
   }, [updateData]);
 
   const onFinish = async (values) => {
+    console.log("valuesForm", values);
     const { name, phone, role } = values;
     const data = {
       _id: updateData?._id,
@@ -128,14 +144,7 @@ const UpdateUserModal = (props) => {
               label="Role"
               rules={[{ required: true }]}
             >
-              <Select
-                placeholder="Chọn quyền !"
-                allowClear
-                options={[
-                  { value: "ADMIN", label: "Admin" },
-                  { value: "HOST", label: "Host" },
-                ]}
-              />
+              <Select placeholder="Chọn quyền !" allowClear options={role} />
             </Form.Item>
           </Form.Item>
         </Form>

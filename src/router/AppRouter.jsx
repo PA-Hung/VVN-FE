@@ -20,15 +20,15 @@ export const router = createBrowserRouter([
   },
   {
     path: "/admin",
-    element: (
-      <ProtectedRoute>
-        <LayoutAdmin />
-      </ProtectedRoute>
-    ),
+    element: <LayoutAdmin />,
     children: [
       {
         index: true,
-        element: <AdminPage />,
+        element: (
+          <ProtectedRoute>
+            <AdminPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "accommodation",
@@ -36,15 +36,27 @@ export const router = createBrowserRouter([
       },
       {
         path: "user",
-        element: <UserPage />,
+        element: (
+          <ProtectedRoute>
+            <UserPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "role",
-        element: <RolePage />,
+        element: (
+          <ProtectedRoute>
+            <RolePage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "permission",
-        element: <PermissionPage />,
+        element: (
+          <ProtectedRoute>
+            <PermissionPage />
+          </ProtectedRoute>
+        ),
       },
     ],
   },
