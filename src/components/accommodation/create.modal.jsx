@@ -65,7 +65,6 @@ const CreateModal = (props) => {
       });
     }
   };
-  9;
 
   return (
     <>

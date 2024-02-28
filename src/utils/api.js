@@ -1,24 +1,24 @@
 import axios from '../utils/axiosCustomize'
 
 // accommodation - By Admin 
-const postCreateAccommodation = (data) => {
+export const postCreateAccommodation = (data) => {
     return axios.post('api/v1/accommodation', data)
 }
 
-const getAccommodation = (query) => {
+export const getAccommodation = (query) => {
     return axios.get(`api/v1/accommodation?${query}`)
 }
 
-const deleteAccommodation = (id) => {
+export const deleteAccommodation = (id) => {
     return axios.delete(`api/v1/accommodation/${id}`)
 }
 
-const updateAccommodation = (data) => {
+export const updateAccommodation = (data) => {
     return axios.patch('api/v1/accommodation', data)
 }
 
 // import/export Excel
-const importExcel = (fileExcel) => {
+export const importExcel = (fileExcel) => {
     const formData = new FormData();
     formData.append("fileExcel", fileExcel);
     return axios({
@@ -31,81 +31,83 @@ const importExcel = (fileExcel) => {
     })
 }
 
-const exportExcel = () => {
+export const exportExcel = () => {
     return axios.get(`api/v1/excel/export`)
 }
 
 // User ----------------------------------------------------------------------------------------------------
 
-const getUsers = (query) => {
+export const getUsers = (query) => {
     return axios.get(`api/v1/users?${query}`)
 }
 
-const postCreateUser = (data) => {
+export const postCreateUser = (data) => {
     return axios.post('api/v1/users', data)
 }
 
-const deleteUser = (id) => {
+export const deleteUser = (id) => {
     return axios.delete(`api/v1/users/${id}`)
 }
 
-const updateUser = (data) => {
+export const updateUser = (data) => {
     return axios.patch('api/v1/users', data)
 }
 
 // Auth ----------------------------------------------------------------------------------------------------
 
-const postLogin = (username, password) => {
+export const postLogin = (username, password) => {
     return axios.post('api/v1/auth/login', { username, password })
 }
 
-const getAccount = () => {
+export const getAccount = () => {
     return axios.get('api/v1/auth/account')
 }
 
-const postLogOut = () => {
+export const postLogOut = () => {
     return axios.post('api/v1/auth/logout')
 }
 
 // Role -------------------------------------------------------------------------------
 
-const createRole = (data) => {
+export const createRole = (data) => {
     return axios.post('api/v1/roles', data)
 }
 
-const getRole = (query) => {
+export const getRole = (query) => {
     return axios.get(`api/v1/roles?${query}`)
 }
 
-const deleteRole = (id) => {
+export const getRoleById = (id) => {
+    return axios.get(`/api/v1/roles/${id}`);
+}
+
+export const deleteRole = (id) => {
     return axios.delete(`api/v1/roles/${id}`)
 }
 
-const updateRole = (data) => {
-    return axios.patch('api/v1/roles', data)
+// export const updateRole = (data) => {
+//     return axios.patch('api/v1/roles', data)
+// }
+
+export const updateRole = (role, id) => {
+    return axios.patch(`/api/v1/roles/${id}`, { ...role })
 }
 
-export {
-    // Excel
-    importExcel,
-    exportExcel,
-    // ---- accommodation
-    updateAccommodation,
-    deleteAccommodation,
-    postCreateAccommodation,
-    getAccommodation,
-    // ----- user
-    getUsers,
-    postCreateUser,
-    deleteUser,
-    updateUser,
-    // ----- auth
-    postLogin,
-    getAccount,
-    postLogOut,
-    // -------- role
-    createRole,
-    getRole,
-    deleteRole,
-    updateRole
+// Permissions -------------------------------------------------------------------------------
+
+export const createPermission = (data) => {
+    return axios.post('api/v1/permissions', data)
 }
+
+export const getPermission = (query) => {
+    return axios.get(`api/v1/permissions?${query}`)
+}
+
+export const deletePermission = (id) => {
+    return axios.delete(`api/v1/permissions/${id}`)
+}
+
+export const updatePermission = (data) => {
+    return axios.patch('api/v1/permissions', data)
+}
+

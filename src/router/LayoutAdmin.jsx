@@ -22,8 +22,8 @@ import { postLogOut } from "@/utils/api.js";
 import { useDispatch, useSelector } from "react-redux";
 import { setLogoutAction } from "@/redux/slice/authSlice.js";
 import HeaderAdmin from "@/components/admin/header.jsx";
-import { setActiveKey, setHomeKey } from "@/redux/slice/menuSilce.js";
-import { setThemeMode } from "../redux/slice/themeSilce";
+import { setActiveKey, setHomeKey } from "@/redux/slice/menuSlice.js";
+import { setThemeMode } from "../redux/slice/themeSlice";
 
 const { Footer, Sider, Content } = Layout;
 

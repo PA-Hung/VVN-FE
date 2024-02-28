@@ -6,7 +6,7 @@ import { postLogin } from "../../utils/api";
 import { useDispatch, useSelector } from "react-redux";
 import { setUserLoginInfo } from "../../redux/slice/authSlice";
 import { useLocation } from "react-router-dom";
-import { setActiveKey } from "../../redux/slice/menuSilce";
+import { setActiveKey } from "../../redux/slice/menuSlice";
 
 const Login = () => {
   const dispatch = useDispatch();

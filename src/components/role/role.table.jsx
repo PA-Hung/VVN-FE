@@ -4,12 +4,15 @@ import { deleteRole } from "../../utils/api";
 import dayjs from "dayjs";
 import "dayjs/locale/vi";
 dayjs.locale("vi");
-import UpdateModal from "./update.modal";
+import UpdateModal from "./update.role/update.modal";
+import { useDispatch } from "react-redux";
+import { fetchRoleById } from "../../redux/slice/roleSlice";
 
 const RoleTable = (props) => {
   const { listRole, loading, getData } = props;
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [updateData, setUpdateData] = useState(null);
+  const dispatch = useDispatch();
   const [meta, setMeta] = useState({
     current: 1,
     pageSize: 15,
@@ -92,7 +95,7 @@ const RoleTable = (props) => {
                 danger
                 onClick={() => {
                   setIsUpdateModalOpen(true);
-                  setUpdateData(record);
+                  dispatch(fetchRoleById(record._id));
                 }}
               >
                 Cập nhật
@@ -148,7 +151,6 @@ const RoleTable = (props) => {
         }}
       />
       <UpdateModal
-        updateData={updateData}
         getData={getData}
         isUpdateModalOpen={isUpdateModalOpen}
         setIsUpdateModalOpen={setIsUpdateModalOpen}

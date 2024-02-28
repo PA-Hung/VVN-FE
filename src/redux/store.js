@@ -12,15 +12,18 @@ import {
 import storage from 'redux-persist/lib/storage';
 import { combineReducers } from 'redux';
 import authReducer from './slice/authSlice';
-import userReducer from './slice/userSilce';
-import menuReducer from './slice/menuSilce';
-import themeReducer from './slice/themeSilce';
+import userReducer from './slice/userSlice';
+import menuReducer from './slice/menuSlice';
+import themeReducer from './slice/themeSlice';
+import roleReducer from './slice/roleSlice'
 
 const rootReducer = combineReducers({
     auth: authReducer,
     user: userReducer,
     menu: menuReducer,
     theme: themeReducer,
+    role: roleReducer
+
 });
 
 const persistConfig = {

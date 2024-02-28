@@ -1,29 +1,27 @@
 import { useEffect, useState } from "react";
-import { Button, notification, message, Upload, Row, Col, Flex } from "antd";
+import { Button, notification, Row, Col, Flex } from "antd";
 import queryString from "query-string";
-import {
-  PlusOutlined,
-  SearchOutlined,
-  ImportOutlined,
-  DownloadOutlined,
-  LoadingOutlined,
-} from "@ant-design/icons";
+import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { exportExcel, getRole, importExcel } from "../../utils/api";
-import CreateModal from "./create.modal";
+import CreateModal from "./create.role/create.modal";
 import dayjs from "dayjs";
 import "dayjs/locale/vi";
 dayjs.locale("vi");
 import * as XLSX from "xlsx";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import SearchModal from "./search.modal";
 import RoleCard from "./role.card";
 import RoleTable from "./role.table";
+import { setLogoutAction } from "../../redux/slice/authSlice";
+import { useNavigate } from "react-router-dom";
 
 const RolePage = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [listRole, setListRole] = useState([]);
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [meta, setMeta] = useState({
     current: 1,
     pageSize: 10,
@@ -53,11 +51,16 @@ const RolePage = () => {
         total: res.data.meta.total,
       });
     } else {
-      notification.error({
-        message: "Có lỗi xảy ra",
-        placement: "top",
-        description: res.message,
-      });
+      if (res.message === "Token không hợp lệ !") {
+        dispatch(setLogoutAction({}));
+        navigate("/");
+      } else {
+        notification.error({
+          message: "Có lỗi xảy ra",
+          placement: "top",
+          description: res.message,
+        });
+      }
     }
     setLoading(false);
   };
@@ -127,47 +130,6 @@ const RolePage = () => {
     setLoading(false);
   };
 
-  const beforeUpload = (file) => {
-    const isXLSX =
-      file.type ===
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-    if (!isXLSX) {
-      message.error(`${file.name} không phải là file excel`);
-    }
-    return isXLSX || Upload.LIST_IGNORE;
-  };
-
-  const handleUploadFileExcel = async ({ file }) => {
-    const response = await importExcel(file, "fileExcel");
-    if (response.statusCode === 201) {
-      message.success(response.data.message);
-      setLoadingUpload(false);
-      getData();
-    } else {
-      message.error(response.data.message);
-    }
-  };
-
-  const handleExport = async () => {
-    try {
-      const response = await exportExcel();
-      if (response.statusCode === 200) {
-        // Chuyển đổi dữ liệu JSON thành worksheet của workbook
-        const ws = XLSX.utils.json_to_sheet(response.data);
-
-        // Tạo workbook và append worksheet vào đó
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Sheet 1");
-
-        // Tạo tệp Excel và tải về
-        XLSX.writeFile(wb, "exported_data.xlsx");
-      }
-    } catch (error) {
-      console.error("Export error:", error);
-      // Xử lý lỗi, ví dụ: hiển thị thông báo lỗi
-    }
-  };
-
   return (
     <div style={{ paddingLeft: 30, paddingRight: 30 }}>
       <div style={{ padding: 20 }}>
@@ -187,6 +149,8 @@ const RolePage = () => {
                 onClick={() => setIsSearchModalOpen(true)}
               />
             </Col>
+          </Row>
+          <Row gutter={[8, 8]}>
             <Col xs={0} sm={24} md={24} lg={12} xl={12}>
               <Button
                 icon={<PlusOutlined />}
@@ -199,54 +163,6 @@ const RolePage = () => {
               <Button
                 icon={<PlusOutlined />}
                 onClick={() => setIsCreateModalOpen(true)}
-              />
-            </Col>
-          </Row>
-          <Row gutter={[8, 8]}>
-            <Col xs={0} sm={24} md={24} lg={12} xl={12}>
-              <Upload
-                maxCount={1}
-                multiple={false}
-                showUploadList={false}
-                beforeUpload={beforeUpload}
-                customRequest={handleUploadFileExcel}
-              >
-                <Button
-                  icon={
-                    loadingUpload ? <LoadingOutlined /> : <ImportOutlined />
-                  }
-                >
-                  Import Excel
-                </Button>
-              </Upload>
-            </Col>
-            <Col xs={24} sm={0} md={0} lg={0} xl={0}>
-              <Upload
-                maxCount={1}
-                multiple={false}
-                showUploadList={false}
-                beforeUpload={beforeUpload}
-                customRequest={handleUploadFileExcel}
-              >
-                <Button
-                  icon={
-                    loadingUpload ? <LoadingOutlined /> : <ImportOutlined />
-                  }
-                />
-              </Upload>
-            </Col>
-            <Col xs={0} sm={24} md={24} lg={12} xl={12}>
-              <Button
-                icon={<DownloadOutlined />}
-                onClick={() => handleExport()}
-              >
-                Export Excel
-              </Button>
-            </Col>
-            <Col xs={24} sm={0} md={0} lg={0} xl={0}>
-              <Button
-                icon={<DownloadOutlined />}
-                onClick={() => handleExport()}
               />
             </Col>
           </Row>

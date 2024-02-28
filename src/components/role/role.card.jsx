@@ -17,7 +17,7 @@ import {
   CaretRightOutlined,
 } from "@ant-design/icons";
 import { deleteAccommodation } from "../../utils/api";
-import UpdateModal from "./update.modal";
+import UpdateModal from "./update.role/update.modal";
 import dayjs from "dayjs";
 import "dayjs/locale/vi";
 dayjs.locale("vi");
