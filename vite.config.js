@@ -13,11 +13,12 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src/"),
+      assets: `${path.resolve(__dirname, "./src/assets/")}`,
       components: `${path.resolve(__dirname, "./src/components/")}`,
-      router: `${path.resolve(__dirname, "./src/router/")}`,
+      routers: `${path.resolve(__dirname, "./src/router/")}`,
       styles: `${path.resolve(__dirname, "./src/styles/")}`,
       utils: `${path.resolve(__dirname, "./src/utils/")}`,
-      //redux: `${path.resolve(__dirname, "./src/redux/")}`,
+      reduxs: `${path.resolve(__dirname, "./src/redux/")}`,
     },
   },
 })

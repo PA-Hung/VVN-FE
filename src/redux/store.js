@@ -15,14 +15,16 @@ import authReducer from './slice/authSlice';
 import userReducer from './slice/userSlice';
 import menuReducer from './slice/menuSlice';
 import themeReducer from './slice/themeSlice';
-import roleReducer from './slice/roleSlice'
+import roleReducer from './slice/roleSlice';
+import permissionReducer from './slice/permissionSlice';
 
 const rootReducer = combineReducers({
     auth: authReducer,
     user: userReducer,
     menu: menuReducer,
     theme: themeReducer,
-    role: roleReducer
+    role: roleReducer,
+    permission: permissionReducer,
 
 });
 

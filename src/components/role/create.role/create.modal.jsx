@@ -8,7 +8,7 @@ import {
   Col,
   Switch,
 } from "antd";
-import { createRole, getPermission } from "../../../utils/api";
+import { createRole, getPermission } from "@/utils/api";
 import { useEffect, useState } from "react";
 import TextArea from "antd/es/input/TextArea";
 import _ from "lodash";
@@ -47,7 +47,7 @@ const CreateModal = (props) => {
 
     const res = await createRole(role);
     if (res.data) {
-      message.success("Thêm mới vai trò thành công");
+      message.success("Thêm mới chức danh thành công");
       resetModal();
       getData();
     } else {
@@ -81,7 +81,7 @@ const CreateModal = (props) => {
   return (
     <>
       <Modal
-        title="Thêm nhóm vai trò mới"
+        title="Thêm nhóm chức danh mới"
         open={isCreateModalOpen}
         onOk={() => form.submit()}
         onCancel={resetModal}
@@ -102,7 +102,7 @@ const CreateModal = (props) => {
           >
             <Col xs={24} sm={12} md={12} lg={12} xl={12}>
               <Form.Item
-                label="Tên vai trò :"
+                label="Tên chức danh :"
                 name="name"
                 rules={[{ required: true, message: "Nhập tên nhóm quyền !" }]}
               >

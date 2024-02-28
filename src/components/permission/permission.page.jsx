@@ -1,32 +1,25 @@
 import { useEffect, useState } from "react";
-import { Button, notification, Row, Col, Flex } from "antd";
+import { Button, notification, message, Row, Col, Flex } from "antd";
 import queryString from "query-string";
 import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
-import { getRole } from "../../utils/api";
-import CreateModal from "./create.role/create.modal";
+import CreateModal from "./create.modal";
 import dayjs from "dayjs";
 import "dayjs/locale/vi";
 dayjs.locale("vi");
 import { useDispatch, useSelector } from "react-redux";
 import SearchModal from "./search.modal";
-import RoleCard from "./role.card";
-import RoleTable from "./role.table";
-import { setLogoutAction } from "../../redux/slice/authSlice";
-import { useNavigate } from "react-router-dom";
+import PermissionTable from "./permission.table";
+import PermissionCard from "./permission.card";
+import { fetchPermission } from "../../redux/slice/permissionSlice";
 
-const RolePage = () => {
+const PermissionPage = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
-  const [listRole, setListRole] = useState([]);
-  const [loading, setLoading] = useState(false);
+
+  const isFetching = useSelector((state) => state.permission.isFetching);
+  const meta = useSelector((state) => state.permission.meta);
+  const permissions = useSelector((state) => state.permission.result);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const [meta, setMeta] = useState({
-    current: 1,
-    pageSize: 10,
-    pages: 0,
-    total: 0,
-  });
 
   useEffect(() => {
     getData();
@@ -34,29 +27,7 @@ const RolePage = () => {
 
   const getData = async () => {
     const query = buildQuery();
-    setLoading(true);
-    const res = await getRole(query);
-    if (res.data) {
-      setListRole(res.data.result);
-      setMeta({
-        current: res?.data?.meta?.current,
-        pageSize: res?.data?.meta?.pageSize,
-        pages: res.data.meta.pages,
-        total: res.data.meta.total,
-      });
-    } else {
-      if (res.message === "Token không hợp lệ !") {
-        dispatch(setLogoutAction({}));
-        navigate("/");
-      } else {
-        notification.error({
-          message: "Có lỗi xảy ra",
-          placement: "top",
-          description: res.message,
-        });
-      }
-    }
-    setLoading(false);
+    dispatch(fetchPermission({ query }));
   };
 
   const buildQuery = (
@@ -69,13 +40,24 @@ const RolePage = () => {
     const clone = { ...params };
 
     if (clone.name) clone.name = `/${clone.name}/i`;
+    if (clone.apiPath) clone.apiPath = `/${clone.apiPath}/i`;
+    if (clone.method) clone.method = `/${clone.method}/i`;
+    if (clone.module) clone.module = `/${clone.module}/i`;
 
     let temp = queryString.stringify(clone);
 
     let sortBy = "";
-
     if (sort && sort.name) {
       sortBy = sort.name === "ascend" ? "sort=name" : "sort=-name";
+    }
+    if (sort && sort.apiPath) {
+      sortBy = sort.apiPath === "ascend" ? "sort=apiPath" : "sort=-apiPath";
+    }
+    if (sort && sort.method) {
+      sortBy = sort.method === "ascend" ? "sort=method" : "sort=-method";
+    }
+    if (sort && sort.module) {
+      sortBy = sort.module === "ascend" ? "sort=module" : "sort=-module";
     }
 
     if (sort && sort.createdAt) {
@@ -89,7 +71,7 @@ const RolePage = () => {
 
     //mặc định sort theo updatedAt
     if (Object.keys(sortBy).length === 0) {
-      temp = `current=${page}&pageSize=${pageSize}&${temp}&sort=-createdAt`;
+      temp = `current=${page}&pageSize=${pageSize}&${temp}&sort=-arrival`;
     } else {
       temp = `current=${page}&pageSize=${pageSize}&${temp}&${sortBy}`;
     }
@@ -98,23 +80,7 @@ const RolePage = () => {
 
   const onSearch = async (value) => {
     const query = buildQuery(value);
-    setLoading(true);
-    const res = await getRole(query);
-    if (res.data) {
-      setListRole(res.data.result);
-      setMeta({
-        current: res.data.meta.current,
-        pageSize: res.data.meta.pageSize,
-        pages: res.data.meta.pages,
-        total: res.data.meta.total,
-      });
-    } else {
-      notification.error({
-        message: "Có lỗi xảy ra",
-        description: res.message,
-      });
-    }
-    setLoading(false);
+    dispatch(fetchPermission({ query }));
   };
 
   return (
@@ -157,16 +123,21 @@ const RolePage = () => {
       </div>
       <Row>
         <Col xs={24} sm={24} md={24} lg={0} xl={0}>
-          {/* <RoleCard
-            listRole={listRole}
-            setListRole={setListRole}
+          {/* <PermissionCard
+            listAccommodation={listAccommodation}
+            setListAccommodation={setListAccommodation}
             loading={loading}
             setLoading={setLoading}
             getData={getData}
           /> */}
         </Col>
         <Col xs={0} sm={0} md={0} lg={24} xl={24}>
-          <RoleTable listRole={listRole} loading={loading} getData={getData} />
+          <PermissionTable
+            permissions={permissions}
+            isFetching={isFetching}
+            getData={getData}
+            meta={meta}
+          />
         </Col>
       </Row>
       <CreateModal
@@ -183,4 +154,4 @@ const RolePage = () => {
   );
 };
 
-export default RolePage;
+export default PermissionPage;

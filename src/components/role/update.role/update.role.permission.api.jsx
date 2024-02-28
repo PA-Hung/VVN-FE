@@ -44,7 +44,7 @@ const UpdateRolePermissionApi = (props) => {
     <>
       <Card
         size="small"
-        title="Các quyền hạn được cho phép ở nhóm vai trò này :"
+        title="Các quyền hạn được cho phép ở nhóm chức danh này :"
       >
         <div>
           <Collapse

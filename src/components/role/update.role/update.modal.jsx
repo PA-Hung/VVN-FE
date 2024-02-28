@@ -52,7 +52,7 @@ const UpdateModal = (props) => {
 
     const res = await updateRole(role, singleRole._id);
     if (res.data) {
-      message.success("Cập nhật vai trò thành công");
+      message.success("Cập nhật chức danh thành công");
       resetModal();
       getData();
     } else {
@@ -115,7 +115,7 @@ const UpdateModal = (props) => {
   return (
     <>
       <Modal
-        title="Cập nhật vai trò"
+        title="Cập nhật chức danh"
         open={isUpdateModalOpen}
         onOk={() => form.submit()}
         onCancel={resetModal}
@@ -136,7 +136,7 @@ const UpdateModal = (props) => {
           >
             <Col xs={24} sm={12} md={12} lg={12} xl={12}>
               <Form.Item
-                label="Tên vai trò :"
+                label="Tên chức danh :"
                 name="name"
                 rules={[{ required: true, message: "Nhập tên nhóm quyền !" }]}
               >

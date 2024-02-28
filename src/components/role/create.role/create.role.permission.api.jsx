@@ -1,6 +1,6 @@
 import { Row, Col, Switch, Card, Collapse, Tooltip, Form } from "antd";
 import React from "react";
-import { colorMethod } from "../../../utils/uils";
+import { colorMethod } from "@/utils/uils";
 import { grey } from "@ant-design/colors";
 import { CaretRightOutlined } from "@ant-design/icons";
 
@@ -44,7 +44,7 @@ const CreateRolePermissionApi = (props) => {
     <>
       <Card
         size="small"
-        title="Các quyền hạn được cho phép ở nhóm vai trò này :"
+        title="Các quyền hạn được cho phép ở nhóm chức danh này :"
       >
         <div>
           <Collapse

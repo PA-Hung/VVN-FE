@@ -20,7 +20,7 @@ const SearchModal = (props) => {
         onCancel={resetModal}
         onOk={handleSearch}
         maskClosable={false}
-        width={"20%"}
+        width={"50%"}
       >
         <Form
           name="search-form"
@@ -29,13 +29,28 @@ const SearchModal = (props) => {
           form={form}
         >
           <Row gutter={[16, 8]} justify="center" wrap={true}>
-            <Col xs={24} sm={24} md={24} lg={24} xl={24}>
+            <Col xs={24} sm={24} md={24} lg={12} xl={6}>
+              <Form.Item label="Tên" name="name" style={{ width: "100%" }}>
+                <Input placeholder="Nhập tên" />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={24} md={24} lg={12} xl={6}>
               <Form.Item
-                label="Chức danh"
-                name="name"
+                label="Chức năng"
+                name="module"
                 style={{ width: "100%" }}
               >
-                <Input placeholder="Chức danh" />
+                <Input placeholder="Nhập Chức năng" />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={24} md={24} lg={12} xl={6}>
+              <Form.Item label="Đường dẫn" name="apiPath">
+                <Input placeholder="Nhập đường dẫn" />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={24} md={24} lg={12} xl={6}>
+              <Form.Item label="Phương thức" name="method">
+                <Input placeholder="Nhập phương thức" />
               </Form.Item>
             </Col>
           </Row>

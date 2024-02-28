@@ -50,6 +50,9 @@ export const roleSlice = createSlice({
                 permissions: []
             }
         },
+        roleOnchangeTable: (state, action) => {
+            state.meta = action.payload
+        },
     },
     extraReducers: (builder) => {
         // Add reducers for additional action types here, and handle loading state as needed
@@ -106,5 +109,5 @@ export const roleSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { resetSingleRole } = roleSlice.actions
+export const { resetSingleRole, roleOnchangeTable } = roleSlice.actions
 export default roleSlice.reducer

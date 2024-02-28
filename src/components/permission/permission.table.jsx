@@ -1,33 +1,27 @@
 import { useEffect, useState } from "react";
-import { Table, Button, notification, Popconfirm, message, Tag } from "antd";
-import { deleteRole } from "../../utils/api";
+import { Table, Button, notification, Popconfirm, message } from "antd";
+import { colorMethod } from "@/utils/uils";
+import { deleteAccommodation } from "@/utils/api";
 import dayjs from "dayjs";
 import "dayjs/locale/vi";
 dayjs.locale("vi");
-import UpdateModal from "./update.role/update.modal";
+import UpdateModal from "./update.modal";
+import { permissionOnchangeTable } from "../../redux/slice/permissionSlice";
 import { useDispatch } from "react-redux";
-import { fetchRoleById } from "../../redux/slice/roleSlice";
+import { deletePermission } from "../../utils/api";
 
-const RoleTable = (props) => {
-  const { listRole, loading, getData } = props;
-  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+const PermissionTable = (props) => {
+  const { permissions, isFetching, getData, meta } = props;
   const dispatch = useDispatch();
-  const [meta, setMeta] = useState({
-    current: 1,
-    pageSize: 15,
-    pages: 0,
-    total: 0,
-  });
 
-  useEffect(() => {
-    getData();
-  }, [meta.current, meta.pageSize]);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [updateData, setUpdateData] = useState(null);
 
-  const confirmDelete = async (user) => {
-    const res = await deleteRole(user._id);
+  const confirmDelete = async (permission) => {
+    const res = await deletePermission(permission._id);
     if (res.data) {
-      await getData();
-      message.success("Xoá quyền thành công !");
+      getData();
+      message.success("Xoá lưu quyền hạn công !");
     } else {
       notification.error({
         message: "Có lỗi xảy ra",
@@ -49,7 +43,7 @@ const RoleTable = (props) => {
       hideInSearch: true,
     },
     {
-      title: "Chức danh",
+      title: "Tên",
       dataIndex: "name",
       key: "name",
       render: (_value, record) => {
@@ -66,24 +60,35 @@ const RoleTable = (props) => {
       },
     },
     {
-      title: "Mô tả",
-      dataIndex: "description",
-      key: "description",
+      title: "Chức năng",
+      dataIndex: "module",
+      key: "module",
     },
     {
-      title: "Trạng thái",
-      dataIndex: "isActive",
-      key: "isActive",
+      title: "Đường dẫn",
+      dataIndex: "apiPath",
+      key: "apiPath",
+    },
+    {
+      title: "Phương thức",
+      dataIndex: "method",
+      key: "method",
       render: (_value, record) => {
         return (
-          <div>
-            <Tag color={record.isActive ? "lime" : "red"}>
-              {record.isActive ? "BẬT" : "TẮT"}
-            </Tag>
-          </div>
+          <p
+            style={{
+              paddingLeft: 10,
+              fontWeight: "bold",
+              marginBottom: 0,
+              color: colorMethod(record?.method),
+            }}
+          >
+            {record?.method || ""}
+          </p>
         );
       },
     },
+
     {
       title: "Hành động",
       render: (record) => {
@@ -94,7 +99,7 @@ const RoleTable = (props) => {
                 danger
                 onClick={() => {
                   setIsUpdateModalOpen(true);
-                  dispatch(fetchRoleById(record._id));
+                  setUpdateData(record);
                 }}
               >
                 Cập nhật
@@ -102,7 +107,7 @@ const RoleTable = (props) => {
             </div>
             <div>
               <Popconfirm
-                title={`Bạn muốn xoá quyền ${record.name} không ?`}
+                title={`Bạn muốn xoá ${record.name} không ?`}
                 onConfirm={() => confirmDelete(record)}
                 okText="Yes"
                 cancelText="No"
@@ -118,24 +123,15 @@ const RoleTable = (props) => {
     },
   ];
 
-  const handleOnchangeTable = (page, pageSize) => {
-    setMeta({
-      current: page,
-      pageSize: pageSize,
-      pages: meta.pages,
-      total: meta.total,
-    });
-  };
-
   return (
     <>
       <Table
         size="small"
         scroll={{ x: true }}
         columns={columns}
-        dataSource={listRole}
+        dataSource={permissions}
         rowKey={"_id"}
-        loading={loading}
+        loading={isFetching}
         bordered={true}
         pagination={{
           position: ["bottomCenter"],
@@ -144,18 +140,28 @@ const RoleTable = (props) => {
           total: meta.total,
           showTotal: (total, range) =>
             `${range[0]} - ${range[1]} of ${total} items`,
-          onChange: (page, pageSize) => handleOnchangeTable(page, pageSize),
+          onChange: (page, pageSize) =>
+            dispatch(
+              permissionOnchangeTable({
+                current: page,
+                pageSize: pageSize,
+                pages: meta.pages,
+                total: meta.total,
+              })
+            ),
           showSizeChanger: true,
           defaultPageSize: meta.pageSize,
         }}
       />
       <UpdateModal
+        updateData={updateData}
         getData={getData}
         isUpdateModalOpen={isUpdateModalOpen}
         setIsUpdateModalOpen={setIsUpdateModalOpen}
+        setUpdateData={setUpdateData}
       />
     </>
   );
 };
 
-export default RoleTable;
+export default PermissionTable;

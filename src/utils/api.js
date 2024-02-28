@@ -85,10 +85,6 @@ export const deleteRole = (id) => {
     return axios.delete(`api/v1/roles/${id}`)
 }
 
-// export const updateRole = (data) => {
-//     return axios.patch('api/v1/roles', data)
-// }
-
 export const updateRole = (role, id) => {
     return axios.patch(`/api/v1/roles/${id}`, { ...role })
 }
@@ -107,7 +103,7 @@ export const deletePermission = (id) => {
     return axios.delete(`api/v1/permissions/${id}`)
 }
 
-export const updatePermission = (data) => {
-    return axios.patch('api/v1/permissions', data)
+export const updatePermission = (permission, id) => {
+    return axios.patch(`/api/v1/permissions/${id}`, { ...permission })
 }
 

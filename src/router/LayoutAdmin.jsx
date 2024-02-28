@@ -66,7 +66,7 @@ const LayoutAdmin = () => {
       dispatch(
         setActiveKey({
           activeKey: e.key,
-          title: "Quản lý người dùng",
+          title: "Quản lý hội viên",
         })
       );
     }
@@ -90,7 +90,15 @@ const LayoutAdmin = () => {
       dispatch(
         setActiveKey({
           activeKey: e.key,
-          title: "Phân quyền người dùng",
+          title: "Quản lý chức danh",
+        })
+      );
+    }
+    if (e.key === "permission") {
+      dispatch(
+        setActiveKey({
+          activeKey: e.key,
+          title: "Quản lý quyền hạn",
         })
       );
     }
@@ -122,15 +130,21 @@ const LayoutAdmin = () => {
       visible: "true",
     },
     {
-      label: <Link to={"/admin/user"}>Quản lý người dùng</Link>,
+      label: <Link to={"/admin/user"}>Quản lý hội viên</Link>,
       key: "user",
       icon: <UserSwitchOutlined />,
       visible: "true",
       // visible: isAdmin === "ADMIN" ? "true" : "false",
     },
     {
-      label: <Link to={"/admin/role"}>Phân quyền người dùng</Link>,
+      label: <Link to={"/admin/role"}>Quản lý chức danh</Link>,
       key: "role",
+      icon: <UserSwitchOutlined />,
+      visible: "true",
+    },
+    {
+      label: <Link to={"/admin/permission"}>Quản lý quyền hạn</Link>,
+      key: "permission",
       icon: <UserSwitchOutlined />,
       visible: "true",
     },
