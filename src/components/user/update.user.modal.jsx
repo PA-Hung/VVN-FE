@@ -38,7 +38,6 @@ const UpdateUserModal = (props) => {
   }, [updateData]);
 
   const onFinish = async (values) => {
-    console.log("valuesForm", values);
     const { name, phone, role } = values;
     const data = {
       _id: updateData?._id,

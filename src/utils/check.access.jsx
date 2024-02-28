@@ -30,7 +30,7 @@ const CheckAccess = (props) => {
         <>{props.children}</>
       ) : (
         <>
-          {hideChildren === false ? (
+          {hideChildren === true ? (
             <Result
               status="403"
               title="Truy cập bị từ chối"

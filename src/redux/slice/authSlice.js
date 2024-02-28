@@ -31,9 +31,6 @@ const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-        setActiveMenu: (state, action) => {
-            state.activeMenu = action.payload;
-        },
         setUserLoginInfo: (state, action) => {
             state.isAuthenticated = true;
             state.isLoading = false;
@@ -91,7 +88,7 @@ const authSlice = createSlice({
 })
 
 export const {
-    setActiveMenu, setUserLoginInfo, setLogoutAction, setRefreshTokenAction
+    setUserLoginInfo, setLogoutAction, setRefreshTokenAction
 } = authSlice.actions;
 
 export default authSlice.reducer

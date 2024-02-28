@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   Layout,
   ConfigProvider,
@@ -13,7 +13,6 @@ import {
   HomeOutlined,
   ExceptionOutlined,
   LogoutOutlined,
-  CalendarOutlined,
   UserOutlined,
   ApiOutlined,
 } from "@ant-design/icons";
@@ -23,7 +22,7 @@ import { postLogOut } from "@/utils/api.js";
 import { useDispatch, useSelector } from "react-redux";
 import { setLogoutAction } from "@/redux/slice/authSlice.js";
 import HeaderAdmin from "@/components/admin/header.jsx";
-import { setActiveKey, setHomeKey } from "@/redux/slice/menuSlice.js";
+import { setHomeKey } from "@/redux/slice/menuSlice.js";
 import { setThemeMode } from "@/redux/slice/themeSlice";
 import { ALL_PERMISSIONS } from "@/utils/permission.module";
 
@@ -34,10 +33,13 @@ const LayoutAdmin = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userPermissions = useSelector((state) => state.auth.user.permissions);
-  const activeMenu = useSelector((state) => state.menu.activeKey);
+
   const themeMode = useSelector((state) => state.theme.themeMode);
   const darkConfig = { algorithm: theme.darkAlgorithm };
   const lightConfig = { algorithm: theme.defaultAlgorithm };
+
+  const [activeMenu, setActiveMenu] = useState("");
+  const location = useLocation();
 
   const [menuItems, setMenuItems] = useState(["items"]);
 
@@ -57,57 +59,6 @@ const LayoutAdmin = () => {
     }
   };
 
-  const handleMenu = (e) => {
-    if (e.key === "home") {
-      dispatch(
-        setActiveKey({
-          activeKey: e.key,
-          title: "Home Admin",
-        })
-      );
-    }
-    if (e.key === "user") {
-      dispatch(
-        setActiveKey({
-          activeKey: e.key,
-          title: "Quản lý hội viên",
-        })
-      );
-    }
-    if (e.key === "accommodation") {
-      dispatch(
-        setActiveKey({
-          activeKey: e.key,
-          title: "Quản lý thông tin lưu trú",
-        })
-      );
-    }
-    if (e.key === "usertasklist") {
-      dispatch(
-        setActiveKey({
-          activeKey: e.key,
-          title: "Danh sách đăng ký",
-        })
-      );
-    }
-    if (e.key === "role") {
-      dispatch(
-        setActiveKey({
-          activeKey: e.key,
-          title: "Quản lý chức danh",
-        })
-      );
-    }
-    if (e.key === "permission") {
-      dispatch(
-        setActiveKey({
-          activeKey: e.key,
-          title: "Quản lý quyền hạn",
-        })
-      );
-    }
-  };
-
   const handleLogout = async () => {
     const res = await postLogOut();
     if (res && res.data) {
@@ -119,6 +70,10 @@ const LayoutAdmin = () => {
       navigate("/");
     }
   };
+
+  useEffect(() => {
+    setActiveMenu(location.pathname);
+  }, [location]);
 
   useEffect(() => {
     if (userPermissions?.length) {
@@ -180,7 +135,6 @@ const LayoutAdmin = () => {
               },
             ]
           : []),
-
         {
           label: <Link onClick={() => handleLogout()}>Đăng xuất</Link>,
           key: "logout",
@@ -231,7 +185,7 @@ const LayoutAdmin = () => {
           <div>
             <Logo />
             <Menu
-              onClick={handleMenu}
+              onClick={(e) => setActiveMenu(e.key)}
               style={{ height: "100vh" }}
               mode="vertical"
               items={menuItems}

@@ -179,91 +179,96 @@ const UserTable = () => {
 
   return (
     <div style={{ paddingLeft: 30, paddingRight: 30 }}>
-      <div
-        style={{
-          color: "black",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: 20,
-        }}
+      <CheckAccess
+        FeListPermission={ALL_PERMISSIONS.USERS.GET_PAGINATE}
+        hideChildren
       >
-        <div>
-          <Form
-            name="search-form"
-            onFinish={onSearch}
-            layout="inline"
-            form={form}
-          >
-            <Form.Item label="Số điện thoại" name="phone">
-              <Input placeholder="Nhập số điện thoại" />
-            </Form.Item>
-            <Form.Item label="Tên" name="name">
-              <Input placeholder="Nhập tên" />
-            </Form.Item>
-            <Button
-              icon={<SearchOutlined />}
-              type={"primary"}
-              htmlType="submit"
-            >
-              Tìm kiếm
-            </Button>
-          </Form>
-        </div>
-        <CheckAccess
-          FeListPermission={ALL_PERMISSIONS.USERS.CREATE}
-          hideChildren
+        <div
+          style={{
+            color: "black",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: 20,
+          }}
         >
           <div>
-            <Button
-              icon={<PlusOutlined />}
-              type={"primary"}
-              onClick={() => setIsCreateModalOpen(true)}
+            <Form
+              name="search-form"
+              onFinish={onSearch}
+              layout="inline"
+              form={form}
             >
-              Thêm mới
-            </Button>
+              <Form.Item label="Số điện thoại" name="phone">
+                <Input placeholder="Nhập số điện thoại" />
+              </Form.Item>
+              <Form.Item label="Tên" name="name">
+                <Input placeholder="Nhập tên" />
+              </Form.Item>
+              <Button
+                icon={<SearchOutlined />}
+                type={"primary"}
+                htmlType="submit"
+              >
+                Tìm kiếm
+              </Button>
+            </Form>
           </div>
-        </CheckAccess>
-      </div>
-      <Table
-        size="small"
-        columns={columns}
-        dataSource={listUsers}
-        rowKey={"_id"}
-        loading={loading}
-        bordered={true}
-        pagination={{
-          current: meta.current,
-          pageSize: meta.pageSize,
-          total: meta.total,
-          showTotal: (total, range) =>
-            `${range[0]} - ${range[1]} of ${total} items`,
-          onChange: (page, pageSize) =>
-            dispatch(
-              userOnchangeTable({
-                current: page,
-                pageSize: pageSize,
-                pages: meta.pages,
-                total: meta.total,
-              })
-            ),
-          showSizeChanger: true,
-          defaultPageSize: meta.pageSize,
-        }}
-      />{" "}
-      {/*  // dataSource phải là mảng Array [] */}
-      <CreateUserModal
-        getData={getData}
-        isCreateModalOpen={isCreateModalOpen}
-        setIsCreateModalOpen={setIsCreateModalOpen}
-      />
-      <UpdateUserModal
-        updateData={updateData}
-        getData={getData}
-        isUpdateModalOpen={isUpdateModalOpen}
-        setIsUpdateModalOpen={setIsUpdateModalOpen}
-        setUpdateData={setUpdateData}
-      />
+          <CheckAccess
+            FeListPermission={ALL_PERMISSIONS.USERS.CREATE}
+            hideChildren
+          >
+            <div>
+              <Button
+                icon={<PlusOutlined />}
+                type={"primary"}
+                onClick={() => setIsCreateModalOpen(true)}
+              >
+                Thêm mới
+              </Button>
+            </div>
+          </CheckAccess>
+        </div>
+        <Table
+          size="small"
+          columns={columns}
+          dataSource={listUsers}
+          rowKey={"_id"}
+          loading={loading}
+          bordered={true}
+          pagination={{
+            current: meta.current,
+            pageSize: meta.pageSize,
+            total: meta.total,
+            showTotal: (total, range) =>
+              `${range[0]} - ${range[1]} of ${total} items`,
+            onChange: (page, pageSize) =>
+              dispatch(
+                userOnchangeTable({
+                  current: page,
+                  pageSize: pageSize,
+                  pages: meta.pages,
+                  total: meta.total,
+                })
+              ),
+            showSizeChanger: true,
+            defaultPageSize: meta.pageSize,
+          }}
+        />{" "}
+        {/*  // dataSource phải là mảng Array [] */}
+        <CreateUserModal
+          getData={getData}
+          isCreateModalOpen={isCreateModalOpen}
+          setIsCreateModalOpen={setIsCreateModalOpen}
+        />
+        <UpdateUserModal
+          updateData={updateData}
+          getData={getData}
+          isUpdateModalOpen={isUpdateModalOpen}
+          setIsUpdateModalOpen={setIsUpdateModalOpen}
+          setUpdateData={setUpdateData}
+        />
+      </CheckAccess>
     </div>
   );
 };
