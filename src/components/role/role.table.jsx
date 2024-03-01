@@ -7,6 +7,8 @@ dayjs.locale("vi");
 import UpdateModal from "./update.role/update.modal";
 import { useDispatch } from "react-redux";
 import { fetchRoleById, roleOnchangeTable } from "../../redux/slice/roleSlice";
+import { ALL_PERMISSIONS } from "../../utils/permission.module";
+import CheckAccess from "../../utils/check.access";
 
 const RoleTable = (props) => {
   const { listRole, isFetching, getData, meta } = props;
@@ -83,29 +85,39 @@ const RoleTable = (props) => {
       render: (record) => {
         return (
           <div style={{ display: "flex", flexDirection: "row", gap: "5px" }}>
-            <div>
-              <Button
-                danger
-                onClick={() => {
-                  setIsUpdateModalOpen(true);
-                  dispatch(fetchRoleById(record._id));
-                }}
-              >
-                Cập nhật
-              </Button>
-            </div>
-            <div>
-              <Popconfirm
-                title={`Bạn muốn xoá quyền ${record.name} không ?`}
-                onConfirm={() => confirmDelete(record)}
-                okText="Yes"
-                cancelText="No"
-              >
-                <Button type={"primary"} danger>
-                  Xoá
+            <CheckAccess
+              FeListPermission={ALL_PERMISSIONS.ROLES.UPDATE}
+              hideChildren
+            >
+              <div>
+                <Button
+                  danger
+                  onClick={() => {
+                    setIsUpdateModalOpen(true);
+                    dispatch(fetchRoleById(record._id));
+                  }}
+                >
+                  Cập nhật
                 </Button>
-              </Popconfirm>
-            </div>
+              </div>
+            </CheckAccess>
+            <CheckAccess
+              FeListPermission={ALL_PERMISSIONS.ROLES.DELETE}
+              hideChildren
+            >
+              <div>
+                <Popconfirm
+                  title={`Bạn muốn xoá quyền ${record.name} không ?`}
+                  onConfirm={() => confirmDelete(record)}
+                  okText="Yes"
+                  cancelText="No"
+                >
+                  <Button type={"primary"} danger>
+                    Xoá
+                  </Button>
+                </Popconfirm>
+              </div>
+            </CheckAccess>
           </div>
         );
       },

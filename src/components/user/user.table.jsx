@@ -26,7 +26,6 @@ const UserTable = () => {
   const loading = useSelector((state) => state.user.isFetching);
   const meta = useSelector((state) => state.user.meta);
   const listUsers = useSelector((state) => state.user.result);
-  console.log(listUsers);
   const dispatch = useDispatch();
 
   const [updateData, setUpdateData] = useState(null);
