@@ -22,6 +22,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchUser, userOnchangeTable } from "../../redux/slice/userSlice";
 import UserTable from "./user.table";
 import SearchUserModal from "./search.user.modal";
+import UserCard from "./user.card";
 
 const UserPage = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -168,12 +169,25 @@ const UserPage = () => {
             </div>
           </CheckAccess>
         </div>
-        <UserTable
-          listUsers={listUsers}
-          loading={loading}
-          getData={getData}
-          meta={meta}
-        />
+        <Row>
+          <Col xs={24} sm={24} md={24} lg={0} xl={0}>
+            <UserCard
+              listUsers={listUsers}
+              loading={loading}
+              getData={getData}
+              meta={meta}
+            />
+          </Col>
+          <Col xs={0} sm={0} md={0} lg={24} xl={24}>
+            <UserTable
+              listUsers={listUsers}
+              loading={loading}
+              getData={getData}
+              meta={meta}
+            />
+          </Col>
+        </Row>
+
         <CreateUserModal
           getData={getData}
           isCreateModalOpen={isCreateModalOpen}

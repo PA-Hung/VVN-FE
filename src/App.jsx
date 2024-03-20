@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import chpLogo from "../src/assets/chpLogo.png";
+import vvnLogo from "@/assets/vvnfrontlogo.png";
 import "./styles/app.css";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -26,7 +26,12 @@ function App() {
       <div>
         <div className="home">
           <div onClick={() => navigate("/login")}>
-            <img src={chpLogo} className="logo" alt="chp logo" />
+            <img
+              src={vvnLogo}
+              className="logo"
+              alt="chp logo"
+              style={{ width: "400px", height: "400px" }}
+            />
           </div>
         </div>
       </div>

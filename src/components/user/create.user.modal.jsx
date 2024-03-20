@@ -12,6 +12,7 @@ import {
 import { getRole, postCreateUser } from "../../utils/api";
 import { useEffect, useState } from "react";
 import _ from "lodash";
+import TextArea from "antd/es/input/TextArea";
 
 const CreateUserModal = (props) => {
   const { getData, isCreateModalOpen, setIsCreateModalOpen } = props;
@@ -84,7 +85,7 @@ const CreateUserModal = (props) => {
           form={form}
         >
           <Row gutter={[8, 8]} justify="left" wrap={true}>
-            <Col xs={24} sm={24} md={24} lg={12} xl={6} span={8}>
+            <Col xs={24} sm={24} md={24} lg={12} xl={8} span={8}>
               <Form.Item
                 label="Họ tên"
                 name="name"
@@ -93,7 +94,7 @@ const CreateUserModal = (props) => {
                 <Input placeholder="Nhập tên" />
               </Form.Item>
             </Col>
-            <Col xs={24} sm={24} md={24} lg={12} xl={6} span={8}>
+            <Col xs={24} sm={24} md={24} lg={12} xl={8} span={8}>
               <Form.Item
                 label="Số điện thoại"
                 name="phone"
@@ -107,7 +108,7 @@ const CreateUserModal = (props) => {
                 <Input placeholder="Nhập số điện thoại" />
               </Form.Item>
             </Col>
-            <Col xs={24} sm={24} md={24} lg={12} xl={6} span={8}>
+            <Col xs={24} sm={24} md={24} lg={12} xl={8} span={8}>
               <Form.Item
                 label="Mật khẩu"
                 name="password"
@@ -118,7 +119,7 @@ const CreateUserModal = (props) => {
                 <Input.Password />
               </Form.Item>
             </Col>
-            <Col xs={24} sm={24} md={24} lg={12} xl={6} span={8}>
+            <Col xs={24} sm={24} md={24} lg={12} xl={8} span={8}>
               <Form.Item
                 label="Chọn quyền"
                 name="role"
@@ -128,7 +129,7 @@ const CreateUserModal = (props) => {
               </Form.Item>
             </Col>
 
-            <Col xs={24} sm={24} md={24} lg={12} xl={6} span={8}>
+            <Col xs={24} sm={24} md={24} lg={12} xl={8} span={8}>
               <Form.Item label="Ngày sinh" name="birthday">
                 <DatePicker
                   placeholder="Chọn ngày"
@@ -137,7 +138,7 @@ const CreateUserModal = (props) => {
                 />
               </Form.Item>
             </Col>
-            <Col xs={24} sm={24} md={24} lg={12} xl={6} span={8}>
+            <Col xs={24} sm={24} md={24} lg={12} xl={8} span={8}>
               <Form.Item label="Giới tính" name="gender">
                 <Select
                   placeholder="Chọn giới tính"
@@ -149,29 +150,33 @@ const CreateUserModal = (props) => {
                 />
               </Form.Item>
             </Col>
-            <Col xs={24} sm={24} md={24} lg={12} xl={6} span={8}>
+            <Col xs={24} sm={24} md={24} lg={12} xl={8} span={8}>
               <Form.Item label="Đẳng cấp chuyên môn" name="level">
                 <Input placeholder="Nhập khóa thi" />
               </Form.Item>
             </Col>
-            <Col xs={24} sm={24} md={24} lg={12} xl={6} span={8}>
+            <Col xs={24} sm={24} md={24} lg={12} xl={8} span={8}>
               <Form.Item label="Trình độ học vấn" name="academic">
                 <Input placeholder="Nhập trình độ học vấn" />
               </Form.Item>
             </Col>
-            <Col xs={24} sm={24} md={24} lg={12} xl={6} span={8}>
+            <Col xs={24} sm={24} md={24} lg={12} xl={8} span={8}>
               <Form.Item label="Quá trình tập luyện" name="experience">
                 <Input placeholder="Nhập quá trình tập luyện" />
               </Form.Item>
             </Col>
-            <Col xs={24} sm={24} md={24} lg={12} xl={6} span={8}>
+            <Col xs={24} sm={24} md={24} lg={12} xl={8} span={8}>
               <Form.Item label="Thành tích" name="achievements">
                 <Input placeholder="Nhập thành tích" />
               </Form.Item>
             </Col>
-            <Col xs={24} sm={24} md={24} lg={12} xl={6} span={8}>
+            <Col xs={24} sm={24} md={24} lg={24} xl={24} span={8}>
               <Form.Item label="Địa chỉ" name="address">
-                <Input placeholder="Nhập địa chỉ" style={{ width: "205%" }} />
+                <TextArea
+                  placeholder="Nhập địa chỉ"
+                  showCount
+                  maxLength={100}
+                />
               </Form.Item>
             </Col>
           </Row>

@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import chpLogo from "../../assets/chpLogo.png";
+import chpLogo from "../../assets/logovvn.png";
 
 const Logo = () => {
   const themeMode = useSelector((state) => state.theme.themeMode);
