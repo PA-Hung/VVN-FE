@@ -1,43 +1,25 @@
-import { useEffect, useState } from "react";
 import {
-  Table,
   Button,
-  notification,
+  Descriptions,
   Popconfirm,
-  message,
-  Form,
-  Input,
   Space,
+  Table,
+  message,
+  notification,
 } from "antd";
-import queryString from "query-string";
-import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
-import CreateUserModal from "./create.user.modal";
-import UpdateUserModal from "./update.user.modal";
-import { deleteUser } from "@/utils/api";
+import React, { useState } from "react";
 import CheckAccess from "@/utils/check.access";
 import { ALL_PERMISSIONS } from "@/utils/permission.module";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchUser, userOnchangeTable } from "../../redux/slice/userSlice";
+import { deleteUser } from "@/utils/api";
+import UpdateUserModal from "./update.user.modal";
+import dayjs from "dayjs";
+import "dayjs/locale/vi";
+dayjs.locale("vi");
 
-const UserTable = () => {
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-
-  const loading = useSelector((state) => state.user.isFetching);
-  const meta = useSelector((state) => state.user.meta);
-  const listUsers = useSelector((state) => state.user.result);
-  const dispatch = useDispatch();
-
+const UserTable = (props) => {
+  const { listUsers, loading, getData, meta } = props;
   const [updateData, setUpdateData] = useState(null);
-
-  useEffect(() => {
-    getData();
-  }, [meta.current, meta.pageSize]);
-
-  const getData = async () => {
-    const query = buildQuery();
-    dispatch(fetchUser({ query }));
-  };
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
   const confirmDelete = async (user) => {
     const res = await deleteUser(user._id);
@@ -64,12 +46,25 @@ const UserTable = () => {
       hideInSearch: true,
     },
     {
-      title: "Tên",
+      title: "Họ Tên",
       dataIndex: "name",
       key: "name",
     },
     {
-      title: "Số điện thoại",
+      title: "Giới tính",
+      dataIndex: "gender",
+      key: "gender",
+    },
+    {
+      title: "Ngày sinh",
+      dataIndex: "birthday",
+      key: "birthday",
+      render: (_value, record) => {
+        return <div>{dayjs(record.birthday).format("DD/MM/YYYY")}</div>;
+      },
+    },
+    {
+      title: "Liên hệ",
       dataIndex: "phone",
       key: "phone",
       render: (_value, record) => {
@@ -130,145 +125,71 @@ const UserTable = () => {
     },
   ];
 
-  const [form] = Form.useForm();
-
-  const buildQuery = (
-    params,
-    sort,
-    filter,
-    page = meta.current,
-    pageSize = meta.pageSize
-  ) => {
-    const clone = { ...params };
-    if (clone.phone) clone.phone = `/${clone.phone}/i`;
-    if (clone.name) clone.name = `/${clone.name}/i`;
-
-    let temp = queryString.stringify(clone);
-
-    let sortBy = "";
-    if (sort && sort.phone) {
-      sortBy = sort.phone === "ascend" ? "sort=phone" : "sort=-phone";
-    }
-    if (sort && sort.name) {
-      sortBy = sort.name === "ascend" ? "sort=name" : "sort=-name";
-    }
-
-    if (sort && sort.createdAt) {
-      sortBy =
-        sort.createdAt === "ascend" ? "sort=createdAt" : "sort=-createdAt";
-    }
-    if (sort && sort.updatedAt) {
-      sortBy =
-        sort.updatedAt === "ascend" ? "sort=updatedAt" : "sort=-updatedAt";
-    }
-
-    //mặc định sort theo updatedAt
-    if (Object.keys(sortBy).length === 0) {
-      temp = `current=${page}&pageSize=${pageSize}&${temp}&sort=-updatedAt`;
-    } else {
-      temp = `current=${page}&pageSize=${pageSize}&${temp}&${sortBy}`;
-    }
-    return temp;
-  };
-
-  const onSearch = async (value) => {
-    const query = buildQuery(value);
-    dispatch(fetchUser({ query }));
-  };
+  const expandableTable = (record) => (
+    <Descriptions
+      title="Thông tin chi tiết"
+      bordered
+      size="small"
+      labelStyle={{ fontWeight: "bold" }}
+    >
+      <Descriptions.Item label="Đẳng cấp chuyên môn / Khóa thi">
+        {record.level}
+      </Descriptions.Item>
+      <Descriptions.Item label="Trình độ học vấn">
+        {record.academic}
+      </Descriptions.Item>
+      <Descriptions.Item label="Quá trình tập luyện">
+        {record.experience}
+      </Descriptions.Item>
+      <Descriptions.Item label="Thành tích">
+        {record.achievements}
+      </Descriptions.Item>
+      <Descriptions.Item label="Địa chỉ thường trú">
+        {record.address}
+      </Descriptions.Item>
+    </Descriptions>
+  );
 
   return (
-    <div style={{ paddingLeft: 30, paddingRight: 30 }}>
-      <CheckAccess
-        FeListPermission={ALL_PERMISSIONS.USERS.GET_PAGINATE}
-        hideChildren
-      >
-        <div
-          style={{
-            color: "black",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: 20,
-          }}
-        >
-          <div>
-            <Form
-              name="search-form"
-              onFinish={onSearch}
-              layout="inline"
-              form={form}
-            >
-              <Form.Item label="Số điện thoại" name="phone">
-                <Input placeholder="Nhập số điện thoại" />
-              </Form.Item>
-              <Form.Item label="Tên" name="name">
-                <Input placeholder="Nhập tên" />
-              </Form.Item>
-              <Button
-                icon={<SearchOutlined />}
-                type={"primary"}
-                htmlType="submit"
-              >
-                Tìm kiếm
-              </Button>
-            </Form>
-          </div>
-          <CheckAccess
-            FeListPermission={ALL_PERMISSIONS.USERS.CREATE}
-            hideChildren
-          >
-            <div>
-              <Button
-                icon={<PlusOutlined />}
-                type={"primary"}
-                onClick={() => setIsCreateModalOpen(true)}
-              >
-                Thêm mới
-              </Button>
-            </div>
-          </CheckAccess>
-        </div>
-        <Table
-          size="small"
-          columns={columns}
-          dataSource={listUsers}
-          rowKey={"_id"}
-          loading={loading}
-          bordered={true}
-          pagination={{
-            current: meta.current,
-            pageSize: meta.pageSize,
-            total: meta.total,
-            showTotal: (total, range) =>
-              `${range[0]} - ${range[1]} of ${total} items`,
-            onChange: (page, pageSize) =>
-              dispatch(
-                userOnchangeTable({
-                  current: page,
-                  pageSize: pageSize,
-                  pages: meta.pages,
-                  total: meta.total,
-                })
-              ),
-            showSizeChanger: true,
-            defaultPageSize: meta.pageSize,
-          }}
-        />{" "}
-        {/*  // dataSource phải là mảng Array [] */}
-        <CreateUserModal
-          getData={getData}
-          isCreateModalOpen={isCreateModalOpen}
-          setIsCreateModalOpen={setIsCreateModalOpen}
-        />
-        <UpdateUserModal
-          updateData={updateData}
-          getData={getData}
-          isUpdateModalOpen={isUpdateModalOpen}
-          setIsUpdateModalOpen={setIsUpdateModalOpen}
-          setUpdateData={setUpdateData}
-        />
-      </CheckAccess>
-    </div>
+    <>
+      <Table
+        size="small"
+        columns={columns}
+        dataSource={listUsers}
+        rowKey={"_id"}
+        loading={loading}
+        bordered={true}
+        expandable={{
+          expandedRowRender: expandableTable,
+          expandRowByClick: true,
+        }}
+        pagination={{
+          current: meta.current,
+          pageSize: meta.pageSize,
+          total: meta.total,
+          showTotal: (total, range) =>
+            `${range[0]} - ${range[1]} of ${total} items`,
+          onChange: (page, pageSize) =>
+            dispatch(
+              userOnchangeTable({
+                current: page,
+                pageSize: pageSize,
+                pages: meta.pages,
+                total: meta.total,
+              })
+            ),
+          showSizeChanger: true,
+          defaultPageSize: meta.pageSize,
+        }}
+      />
+      <UpdateUserModal
+        updateData={updateData}
+        getData={getData}
+        isUpdateModalOpen={isUpdateModalOpen}
+        setIsUpdateModalOpen={setIsUpdateModalOpen}
+        setUpdateData={setUpdateData}
+      />
+    </>
   );
 };
 

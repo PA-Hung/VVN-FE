@@ -1,6 +1,17 @@
 import { useEffect, useState } from "react";
-import { Modal, Input, notification, Form, Select, message } from "antd";
+import {
+  Modal,
+  Input,
+  notification,
+  Form,
+  Select,
+  message,
+  Row,
+  Col,
+  DatePicker,
+} from "antd";
 import { getRole, updateUser } from "@/utils/api";
+import dayjs from "dayjs";
 
 const UpdateUserModal = (props) => {
   const {
@@ -29,21 +40,49 @@ const UpdateUserModal = (props) => {
 
   useEffect(() => {
     if (updateData) {
+      const birthdayDayJS = dayjs(updateData.birthday).isValid()
+        ? dayjs(updateData.date)
+        : null;
       form.setFieldsValue({
         name: updateData.name,
         phone: updateData.phone,
         role: updateData.role._id,
+        gender: updateData.gender,
+        birthday: birthdayDayJS,
+        level: updateData.level,
+        academic: updateData.academic,
+        experience: updateData.experience,
+        achievements: updateData.achievements,
+        address: updateData.address,
       });
     }
   }, [updateData]);
 
   const onFinish = async (values) => {
-    const { name, phone, role } = values;
+    const {
+      name,
+      phone,
+      role,
+      gender,
+      birthday,
+      level,
+      academic,
+      experience,
+      achievements,
+      address,
+    } = values;
     const data = {
       _id: updateData?._id,
       name,
       phone,
       role,
+      gender,
+      birthday,
+      level,
+      academic,
+      experience,
+      achievements,
+      address,
     };
 
     const res = await updateUser(data);
@@ -74,78 +113,100 @@ const UpdateUserModal = (props) => {
         onOk={() => form.submit()}
         onCancel={resetModal}
         maskClosable={false}
+        width={"45%"}
       >
         <Form
-          name="create-new-user"
+          name="update-user"
           onFinish={onFinish}
           layout="vertical"
           form={form}
         >
-          <Form.Item>
-            <Form.Item
-              style={{
-                display: "inline-block",
-                width: "calc(50% - 16px)",
-                marginBottom: 0,
-              }}
-              label="Phone"
-              name="phone"
-              rules={[
-                { required: true, message: "Bạn phải nhập số điện thoại !" },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              style={{
-                display: "inline-block",
-                width: "calc(50%)",
-                marginLeft: 8,
-                marginBottom: 0,
-              }}
-              label="Name"
-              name="name"
-              rules={[
-                { required: true, message: "Bạn phải nhập tên người dùng !" },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-          </Form.Item>
+          <Row gutter={[8, 8]} justify="left" wrap={true}>
+            <Col xs={24} sm={24} md={24} lg={12} xl={6} span={8}>
+              <Form.Item
+                label="Họ tên"
+                name="name"
+                rules={[{ required: true, message: "Bạn phải nhập họ tên !" }]}
+              >
+                <Input placeholder="Nhập tên" />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={24} md={24} lg={12} xl={6} span={8}>
+              <Form.Item
+                label="Số điện thoại"
+                name="phone"
+                rules={[
+                  {
+                    required: true,
+                    message: "Bạn phải nhập số điện thoại !",
+                  },
+                ]}
+              >
+                <Input placeholder="Nhập số điện thoại" />
+              </Form.Item>
+            </Col>
+            {/* <Col xs={24} sm={24} md={24} lg={12} xl={6} span={8}>
+              <Form.Item label="Mật khẩu" name="password">
+                <Input.Password />
+              </Form.Item>
+            </Col> */}
+            <Col xs={24} sm={24} md={24} lg={12} xl={6} span={8}>
+              <Form.Item
+                label="Chọn quyền"
+                name="role"
+                rules={[{ required: true }]}
+              >
+                <Select placeholder="Chọn quyền !" options={role} />
+              </Form.Item>
+            </Col>
 
-          <Form.Item>
-            <Form.Item
-              style={{
-                display: "inline-block",
-                width: "calc(50% - 16px)",
-                marginBottom: 0,
-              }}
-              label="Password"
-              name="password"
-              rules={[
-                {
-                  required: updateData ? false : true,
-                  message: "Bạn phải nhập mật khẩu !",
-                },
-              ]}
-            >
-              <Input.Password disabled={updateData ? true : false} />
-            </Form.Item>
-
-            <Form.Item
-              style={{
-                display: "inline-block",
-                width: "calc(50%)",
-                marginLeft: 8,
-                marginBottom: 5,
-              }}
-              name="role"
-              label="Role"
-              rules={[{ required: true }]}
-            >
-              <Select placeholder="Chọn quyền !" allowClear options={role} />
-            </Form.Item>
-          </Form.Item>
+            <Col xs={24} sm={24} md={24} lg={12} xl={6} span={8}>
+              <Form.Item label="Ngày sinh" name="birthday">
+                <DatePicker
+                  placeholder="Chọn ngày"
+                  style={{ width: "100%" }}
+                  format={"DD/MM/YYYY"}
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={24} md={24} lg={12} xl={6} span={8}>
+              <Form.Item label="Giới tính" name="gender">
+                <Select
+                  placeholder="Chọn giới tính"
+                  allowClear
+                  options={[
+                    { value: "Nam", label: "Nam" },
+                    { value: "Nữ", label: "Nữ" },
+                  ]}
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={24} md={24} lg={12} xl={6} span={8}>
+              <Form.Item label="Đẳng cấp chuyên môn" name="level">
+                <Input placeholder="Nhập khóa thi" />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={24} md={24} lg={12} xl={6} span={8}>
+              <Form.Item label="Trình độ học vấn" name="academic">
+                <Input placeholder="Nhập trình độ học vấn" />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={24} md={24} lg={12} xl={6} span={8}>
+              <Form.Item label="Quá trình tập luyện" name="experience">
+                <Input placeholder="Nhập quá trình tập luyện" />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={24} md={24} lg={12} xl={6} span={8}>
+              <Form.Item label="Thành tích" name="achievements">
+                <Input placeholder="Nhập thành tích" />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={24} md={24} lg={12} xl={6} span={8}>
+              <Form.Item label="Địa chỉ" name="address">
+                <Input placeholder="Nhập địa chỉ" style={{ width: "205%" }} />
+              </Form.Item>
+            </Col>
+          </Row>
         </Form>
       </Modal>
     </>
